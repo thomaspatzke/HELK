@@ -50,5 +50,5 @@ done
 
 # *********** Loading Sigma searches ***************
 cd $SIGMA_DIR
-tools/sigmac -t kibana -c tools/config/helk.yml -Ooutput=curl -o import-sigma-to-kibana.sh -r rules/
+tools/sigmac -t kibana -c tools/config/helk.yml -Ooutput=curl -o import-sigma-to-kibana.sh -r rules/windows
 . import-sigma-to-kibana.sh
