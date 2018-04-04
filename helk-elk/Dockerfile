@@ -53,8 +53,10 @@ RUN bash -c 'mkdir -pv /opt/helk/{scripts,otx,output_templates,dashboards,elasti
 ADD scripts/helk_otx.py /opt/helk/scripts/
 ADD scripts/elk-kibana-setup.sh /opt/helk/scripts/
 ADD scripts/elk-entrypoint.sh /opt/helk/scripts/
+ADD scripts/update-sigma.sh /opt/helk/scripts/
 RUN chmod +x /opt/helk/scripts/elk-kibana-setup.sh
 RUN chmod +x /opt/helk/scripts/elk-entrypoint.sh
+RUN chmod +x /opt/helk/scripts/update-sigma.sh
 
 # *********** ELK Version ***************
 ENV ELK_VERSION=6.2.3
@@ -134,6 +136,10 @@ ADD enrichments/otx/ /opt/helk/otx/
 # *********** Creating Cron Job to run OTX script every monday at 8AM and capture last 30 days of Intel *************
 RUN cronjob="0 8 * * 1 python /opt/helk/scripts/helk_otx.py" \
   && echo "$cronjob" | crontab
+
+# *********** Creating Cron Job to run Sigma script every monday at 8:05 AM and update the Sigma queries *************
+RUN cronjob="5 8 * * 1 /opt/helk/scripts/update-sigma.sh" \
+  && (crontab -l; echo "$cronjob") | crontab
 
 # *********** Pulling Sigma Git Repository and install Python dependencies *************
 RUN git clone https://github.com/Neo23x0/sigma.git /opt/helk/sigma
